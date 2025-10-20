@@ -8,3 +8,4 @@ const API = axios.create({
 export const fetchScenarios = () => API.get("/scenarios");
 export const askQuestion = (scenarioIndex, question) => 
   API.post("/ask", { scenarioIndex, question });
+
