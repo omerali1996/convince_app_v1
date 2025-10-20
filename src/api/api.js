@@ -1,10 +1,13 @@
-import axios from "axios";
+const BASE_URL = "https://convince-app-v1-1.onrender.com"; // Backend URL
 
-const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "https://convince-app-v1-1.onrender.com",
-  timeout: 10000,
-});
+export const getScenarios = async () => {
+    const res = await fetch(`${BASE_URL}/scenarios`);
+    return res.json();
+};
 
-export const fetchScenarios = () => API.get("/scenarios");
-export const askQuestion = (scenarioIndex, question) => 
-  API.post("/ask", { scenarioIndex, question });
+export const getScenario = async (id) => {
+    const res = await fetch(`${BASE_URL}/scenario/${id}`);
+    return res.json();
+};
+
+// OpenAI cevabı backend üzerinden çağrılacaksa buraya eklenebilir
