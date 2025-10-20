@@ -1,12 +1,13 @@
-import React from "react";
-import { useGame } from "../context/GameContext";
+import React, { useContext } from "react";
+import { GameContext } from "../context/GameContext";
 
-export default function WelcomeScreen({ setScreen }) {
+export default function WelcomeScreen() {
+  const { goToScenario } = useContext(GameContext);
+
   return (
-    <div className="screen">
+    <div style={{ textAlign: "center", marginTop: 50 }}>
       <h2>👋 Merhaba! İkna Oyununa Başlayalım</h2>
-      <button onClick={() => setScreen("scenario")}>Başlat</button>
-      <button style={{background: "#ef4444"}} onClick={() => window.close()}>Çıkış</button>
+      <button onClick={goToScenario} style={{ marginTop: 20, width: "80%" }}>Başlat</button>
     </div>
   );
 }
