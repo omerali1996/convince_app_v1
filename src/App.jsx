@@ -1,24 +1,21 @@
-import React, { useState } from "react";
-import { GameProvider } from "./context/GameContext";
+import React, { useContext } from "react";
+import { GameProvider, GameContext } from "./context/GameContext";
 import WelcomeScreen from "./components/WelcomeScreen";
 import ScenarioScreen from "./components/ScenarioScreen";
 import GameScreen from "./components/GameScreen";
 
+function AppContent() {
+  const { screen } = useContext(GameContext);
+
+  if (screen === "welcome") return <WelcomeScreen />;
+  if (screen === "scenario") return <ScenarioScreen />;
+  if (screen === "game") return <GameScreen />;
+}
+
 export default function App() {
-  const [screen, setScreen] = useState("welcome");
-
-  const renderScreen = () => {
-    switch(screen) {
-      case "welcome": return <WelcomeScreen setScreen={setScreen} />;
-      case "scenario": return <ScenarioScreen setScreen={setScreen} />;
-      case "game": return <GameScreen setScreen={setScreen} />;
-      default: return <WelcomeScreen setScreen={setScreen} />;
-    }
-  };
-
   return (
     <GameProvider>
-      {renderScreen()}
+      <AppContent />
     </GameProvider>
   );
 }
