@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { GameProvider, useGame } from "./context/GameContext";
 import WelcomeScreen from "./components/WelcomeScreen";
-import ScenarioListScreen from "./components/ScenarioScreen";
+import ScenarioScreen from "./components/ScenarioScreen";
 import GameScreen from "./components/GameScreen";
 
 function GameFlow() {
@@ -9,7 +9,7 @@ function GameFlow() {
 
   switch (step) {
     case 0: return <WelcomeScreen />;
-    case 1: return <ScenarioListScreen />;
+    case 1: return <ScenarioScreen />;
     case 2: return <GameScreen />;
     default: return <WelcomeScreen />;
   }
@@ -18,10 +18,9 @@ function GameFlow() {
 export default function App() {
   return (
     <GameProvider>
-      <div className="container card">
+      <div className="container">
         <GameFlow />
       </div>
     </GameProvider>
   );
 }
-
