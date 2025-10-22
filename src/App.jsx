@@ -1,15 +1,16 @@
 import React from "react";
 import { GameProvider, useGame } from "./context/GameContext";
 import WelcomeScreen from "./components/WelcomeScreen";
-import ScenarioScreen from "./components/ScenarioScreen";
+import ScenariosScreen from "./components/ScenariosScreen";
 import GameScreen from "./components/GameScreen";
+import "./index.css";
 
 function AppContent() {
   const { currentScreen } = useGame();
 
   switch (currentScreen) {
     case "welcome": return <WelcomeScreen />;
-    case "scenario": return <ScenarioScreen />;
+    case "scenarios": return <ScenariosScreen />;
     case "game": return <GameScreen />;
     default: return <WelcomeScreen />;
   }
