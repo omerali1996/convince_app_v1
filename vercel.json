@@ -1,21 +1,4 @@
-
-
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "src/index.js",
-      "use": "@vercel/static-build"
-    },
-    {
-      "src": "backend/app.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "backend/app.py" },
-    { "src": "/(.*)", "dest": "src/index.js" }
-  ],
   "buildCommand": "npm run build",
   "outputDirectory": "build",
   "framework": "create-react-app"
