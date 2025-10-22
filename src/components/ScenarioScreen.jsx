@@ -8,97 +8,66 @@ export default function ScenariosScreen() {
     fetchScenarios();
   }, []);
 
-  if (loading) return <div style={loadingStyle}>Yükleniyor...</div>;
-  if (error) return <div style={errorStyle}>{error}</div>;
-  if (!scenarios.length) return <div style={emptyStyle}>Senaryo bulunamadı.</div>;
+  if (loading) return <div style={status}>Yükleniyor...</div>;
+  if (error) return <div style={status}>{error}</div>;
+  if (!scenarios.length) return <div style={status}>Senaryo bulunamadı.</div>;
 
   return (
-    <div style={containerStyle}>
-      <h2 style={titleStyle}>Senaryolar</h2>
-      <div style={gridStyle}>
+    <div style={container}>
+      <h2 style={title}>Senaryolar</h2>
+      <div style={list}>
         {scenarios.map((s) => (
-          <div
+          <button
             key={s.id}
             onClick={() => selectScenario(s)}
-            style={cardStyle}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.12)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)";
-            }}
+            style={button}
           >
-            <h3 style={cardTitleStyle}>{s.name}</h3>
-            <p style={cardTextStyle}>{s.story.length > 80 ? s.story.slice(0, 80) + "..." : s.story}</p>
-          </div>
+            {s.name}
+          </button>
         ))}
       </div>
     </div>
   );
 }
 
-// -------------------------
 // Styles
-// -------------------------
-const containerStyle = {
-  padding: 20,
+const container = {
   minHeight: "100vh",
+  padding: 30,
   background: "#FFFDF7",
   fontFamily: '"Inter", "Roboto", sans-serif',
 };
 
-const titleStyle = {
-  color: "#2B2B2B",
+const title = {
   fontSize: 28,
+  color: "#2B2B2B",
   marginBottom: 20,
-  textAlign: "center",
 };
 
-const gridStyle = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-  gap: 20,
+const list = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 12,
 };
 
-const cardStyle = {
-  padding: 20,
-  background: "#fff",
-  borderRadius: 12,
-  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+const button = {
+  padding: "12px 20px",
+  fontSize: 16,
   cursor: "pointer",
-  transition: "transform 0.2s, box-shadow 0.2s",
+  backgroundColor: "#0a74da",
+  color: "white",
+  border: "none",
+  borderRadius: 8,
+  boxShadow: "0 3px 8px rgba(0,0,0,0.1)",
+  transition: "all 0.2s",
 };
 
-const cardTitleStyle = {
-  margin: 0,
-  color: "#2B2B2B",
-  fontSize: 18,
+button[":hover"] = {
+  transform: "translateY(-2px)",
+  boxShadow: "0 6px 12px rgba(0,0,0,0.15)",
 };
 
-const cardTextStyle = {
-  marginTop: 8,
-  color: "#555",
-  fontSize: 14,
-  lineHeight: 1.4,
-};
-
-const loadingStyle = {
-  padding: 20,
-  textAlign: "center",
-  fontSize: 18,
-  color: "#2B2B2B",
-};
-
-const errorStyle = {
-  padding: 20,
-  textAlign: "center",
-  fontSize: 18,
-  color: "#D9534F",
-};
-
-const emptyStyle = {
+const status = {
   padding: 20,
   textAlign: "center",
   fontSize: 18,
