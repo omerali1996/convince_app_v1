@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { GameProvider, useGame } from "./context/GameContext";
 import WelcomeScreen from "./components/WelcomeScreen";
-import ScenarioListScreen from "./components/ScenarioListScreen";
+import ScenarioListScreen from "./components/ScenarioScreen";
 import GameScreen from "./components/GameScreen";
 
 function GameFlow() {
@@ -24,3 +24,4 @@ export default function App() {
     </GameProvider>
   );
 }
+
