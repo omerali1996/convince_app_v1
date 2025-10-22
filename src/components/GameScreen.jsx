@@ -1,31 +1,63 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useGame } from "../context/GameContext";
+import api from "../api";
 
-export default function ScenarioListScreen() {
-  const { cases, setStep } = useGame();
+export default function GameScreen() {
+  const { cases, currentCaseIndex } = useGame();
+  const currentScenario = cases[currentCaseIndex];
+  const [userInput, setUserInput] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
 
-  if (!cases.length) return <p>Senaryolar yükleniyor...</p>;
+  if (!currentScenario) return <p>Senaryo yükleniyor...</p>;
 
-  const selectScenario = (index) => {
-    setStep(1); // Game ekranını başlat
-    localStorage.setItem("currentScenarioIndex", index); // Seçilen senaryoyu kaydet
-    window.location.href = "/game"; // Veya router ile yönlendirme
+  const sendMessage = async () => {
+    if (!userInput.trim()) return;
+
+    const newHistory = [...chatHistory, { sender: "Sen", text: userInput }];
+    setChatHistory(newHistory);
+    setUserInput("");
+
+    try {
+      const response = await api.post("/api/ask", {
+        question: userInput,
+        scenarioIndex: currentCaseIndex
+      });
+
+      setChatHistory((prev) => [
+        ...prev,
+        { sender: `${currentScenario["Senaryo Adı"]} karakteri`, text: response.data.answer }
+      ]);
+    } catch (err) {
+      console.error(err);
+      setChatHistory((prev) => [
+        ...prev,
+        { sender: "Sistem", text: "AI yanıtı alınamadı" }
+      ]);
+    }
   };
 
   return (
     <div className="screen">
-      <h2>📜 Senaryolar</h2>
-      <div className="screen-content" style={{ flexDirection: "column", gap: "10px" }}>
-        {cases.map((scenario, index) => (
-          <button
-            key={index}
-            className="btn btn-primary"
-            onClick={() => selectScenario(index)}
-            style={{ width: "100%", padding: "10px 0" }}
-          >
-            {scenario["Senaryo Adı"]}
-          </button>
+      <h2>📖 {currentScenario["Senaryo Adı"]}</h2>
+
+      <div className="screen-content" style={{ flexDirection: "column", gap: "12px", height: "300px", overflowY: "auto" }}>
+        {chatHistory.map((msg, idx) => (
+          <div key={idx}>
+            <strong>{msg.sender}:</strong> {msg.text}
+          </div>
         ))}
+      </div>
+
+      <div className="input-row">
+        <input
+          type="text"
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
+          placeholder="Mesajınızı yazın..."
+        />
+        <button className="btn btn-primary" onClick={sendMessage}>
+          Gönder
+        </button>
       </div>
     </div>
   );
