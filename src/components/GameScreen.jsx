@@ -1,34 +1,32 @@
-import React, { useState, useContext } from "react";
-import { GameContext } from "../context/GameContext";
+import React from "react";
+import { useGame } from "../context/GameContext";
 
-export default function GameScreen() {
-  const { scenario, goBack } = useContext(GameContext);
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
+export default function ScenarioListScreen() {
+  const { cases, setStep } = useGame();
 
-  const sendMessage = () => {
-    if (!input) return;
-    setMessages([...messages, { from: "user", text: input }]);
-    setMessages((prev) => [...prev, { from: "AI", text: "AI cevabı backend'den gelecek" }]);
-    setInput("");
+  if (!cases.length) return <p>Senaryolar yükleniyor...</p>;
+
+  const selectScenario = (index) => {
+    setStep(1); // Game ekranını başlat
+    localStorage.setItem("currentScenarioIndex", index); // Seçilen senaryoyu kaydet
+    window.location.href = "/game"; // Veya router ile yönlendirme
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <button onClick={goBack}>Geri</button>
-      <h3>{scenario?.["Senaryo Adı"]}</h3>
-      <p>{scenario?.["Hikaye"]}</p>
-
-      <div style={{ border: "1px solid #ccc", padding: 10, height: 200, overflowY: "auto", marginBottom: 10 }}>
-        {messages.map((m, i) => (
-          <div key={i} style={{ textAlign: m.from === "user" ? "right" : "left" }}>
-            <b>{m.from === "user" ? "Sen" : scenario?.["Senaryo Adı"]}:</b> {m.text}
-          </div>
+    <div className="screen">
+      <h2>📜 Senaryolar</h2>
+      <div className="screen-content" style={{ flexDirection: "column", gap: "10px" }}>
+        {cases.map((scenario, index) => (
+          <button
+            key={index}
+            className="btn btn-primary"
+            onClick={() => selectScenario(index)}
+            style={{ width: "100%", padding: "10px 0" }}
+          >
+            {scenario["Senaryo Adı"]}
+          </button>
         ))}
       </div>
-
-      <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Mesajınızı yazın" />
-      <button onClick={sendMessage} style={{ marginTop: 10, width: "100%" }}>Gönder</button>
     </div>
   );
 }
