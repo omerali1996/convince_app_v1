@@ -1,59 +1,77 @@
-import React, { createContext, useContext, useState } from "react";
+// src/context/GameContext.jsx
+import React, { createContext, useContext, useEffect, useState } from "react";
+import api from "../api";
 
 const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
-  const [step, setStep] = useState(0); // 0: Welcome, 1: Scenario, 2: Game
-  const [selectedScenario, setSelectedScenario] = useState(null);
-  const [userMessages, setUserMessages] = useState([]); // Kullanıcının mesajları
-  const [aiMessages, setAiMessages] = useState([]); // AI cevapları
+  const [currentScreen, setCurrentScreen] = useState("welcome"); // welcome, scenario, game
+  const [cases, setCases] = useState([]);
+  const [currentCaseIndex, setCurrentCaseIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Welcome ekranından scenario ekranına geçiş
-  const startGame = () => setStep(1);
+  // Kullanıcının cevapları / sorular senaryoya özel burada tutuluyor
+  const [questionsData, setQuestionsData] = useState({}); 
+  // { caseIndex: { answers: [], questionCount: 0 } }
 
-  // Scenario seçildikten sonra GameScreen'e geçiş
-  const selectScenario = (scenario) => {
-    setSelectedScenario(scenario);
-    setStep(2);
-    setUserMessages([]);
-    setAiMessages([]);
-  };
+  useEffect(() => {
+    let mounted = true;
+    const fetchCases = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get("/api/cases"); // backend endpoint
+        if (!mounted) return;
+        setCases(res.data || []);
+      } catch (err) {
+        if (!mounted) return;
+        setError(err.message || "Senaryolar yüklenemedi");
+      } finally {
+        if (!mounted) return;
+        setLoading(false);
+      }
+    };
+    fetchCases();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-  // Kullanıcı mesajı ekle
-  const addUserMessage = (message) => {
-    setUserMessages((prev) => [...prev, message]);
-  };
-
-  // AI mesajı ekle
-  const addAiMessage = (message) => {
-    setAiMessages((prev) => [...prev, message]);
-  };
-
-  // GameScreen'den ScenarioScreen'e geri dön
-  const backToScenario = () => setStep(1);
-
-  // Oyunu baştan başlat
   const resetGame = () => {
-    setStep(0);
-    setSelectedScenario(null);
-    setUserMessages([]);
-    setAiMessages([]);
+    setCurrentScreen("welcome");
+    setCurrentCaseIndex(0);
+    setQuestionsData({});
+  };
+
+  const nextCase = () => {
+    setCurrentCaseIndex((i) => (i + 1 >= cases.length ? 0 : i + 1));
+    setCurrentScreen("scenario");
+  };
+
+  const updateCaseQuestions = (caseIndex, newData) => {
+    setQuestionsData((prev) => ({
+      ...prev,
+      [caseIndex]: {
+        ...prev[caseIndex],
+        ...newData,
+      },
+    }));
   };
 
   return (
     <GameContext.Provider
       value={{
-        step,
-        setStep,
-        selectedScenario,
-        startGame,
-        selectScenario,
-        userMessages,
-        aiMessages,
-        addUserMessage,
-        addAiMessage,
-        backToScenario,
+        currentScreen,
+        setCurrentScreen,
+        cases,
+        currentCaseIndex,
+        setCurrentCaseIndex,
+        loading,
+        error,
         resetGame,
+        nextCase,
+        questionsData,
+        updateCaseQuestions,
       }}
     >
       {children}
