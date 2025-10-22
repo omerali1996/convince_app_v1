@@ -1,61 +1,29 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import api from "../api";
 
 const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
+  const [step, setStep] = useState(0); // 0 = welcome
   const [scenarios, setScenarios] = useState([]);
-  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
-  const [userInput, setUserInput] = useState("");
-  const [chatHistory, setChatHistory] = useState([]);
+  const [selectedScenario, setSelectedScenario] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchScenarios = async () => {
-      try {
-        const res = await api.get("/api/scenarios");
-        setScenarios(res.data || []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchScenarios();
+    let mounted = true;
+    api.get("/api/scenarios")
+      .then(res => mounted && setScenarios(res.data))
+      .catch(console.error)
+      .finally(() => mounted && setLoading(false));
+    return () => mounted = false;
   }, []);
 
-  const sendMessage = async () => {
-    if (!userInput) return;
-    const scenario = scenarios[currentScenarioIndex];
-    const messageEntry = { sender: "user", text: userInput };
-    setChatHistory((prev) => [...prev, messageEntry]);
-    setUserInput("");
-
-    try {
-      const res = await api.post("/api/ask", {
-        user_input: messageEntry.text,
-        scenario_id: scenario.id
-      });
-      setChatHistory((prev) => [...prev, { sender: "ai", text: res.data.answer }]);
-    } catch (err) {
-      setChatHistory((prev) => [...prev, { sender: "ai", text: "Hata oluştu." }]);
-    }
-  };
-
-  const nextScenario = () => {
-    setCurrentScenarioIndex((i) => (i + 1 >= scenarios.length ? 0 : i + 1));
-    setChatHistory([]);
-  };
-
   return (
-    <GameContext.Provider
-      value={{
-        scenarios,
-        currentScenarioIndex,
-        userInput,
-        setUserInput,
-        chatHistory,
-        sendMessage,
-        nextScenario
-      }}
-    >
+    <GameContext.Provider value={{
+      step, setStep,
+      scenarios, selectedScenario, setSelectedScenario,
+      loading
+    }}>
       {children}
     </GameContext.Provider>
   );
