@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, jsonify
 from openai import OpenAI
 from flask_cors import CORS
-from convince import scenarios  # senin Kivy'deki Convince.py içindeki senaryolar
+from scenarios import scenarios  # senin Kivy'deki Convince.py içindeki senaryolar
 
 app = Flask(__name__)
 CORS(app)
@@ -58,3 +58,4 @@ def ask():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
