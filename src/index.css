@@ -1,9 +1,80 @@
-body {
+/* ==== Genel Reset ve Temel Ayarlar ==== */
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f7f7f7;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
-button {
+:root {
+  --bg-1: #f7fafc;
+  --card-bg: #ffffff;
+  --accent: #0b6efd;
+  --accent-dark: #0552c7;
+  --muted: #6b7280;
+  --radius-lg: 18px;
+}
+
+body {
+  background: linear-gradient(135deg, #eef2f3 0%, #d9e4ec 100%);
+  color: #0f172a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 480px;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+
+/* Card */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.08);
+  padding: 28px;
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  min-height: 420px;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.card:focus-within, .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 40px rgba(2,6,23,0.10);
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(11,110,253,0.14);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #0f172a;
+  border: 1px solid #e6eef7;
 }
