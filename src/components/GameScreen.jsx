@@ -1,33 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
 import { useGame } from "../context/GameContext";
+import api from "../api";
 
 export default function GameScreen() {
-  const { messages, userInput, setUserInput, sendMessage, resetGame } = useGame();
+  const { currentScenario, exitGame } = useGame();
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    sendMessage(userInput);
+  if (!currentScenario) return <div>Senaryo seçilmedi.</div>;
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+    const userMessage = input;
+    setMessages((prev) => [...prev, { sender: "user", text: userMessage }]);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const res = await api.post("/api/ask", {
+        user_input: userMessage,
+        scenario_id: currentScenario.id,
+      });
+      setMessages((prev) => [...prev, { sender: "ai", text: res.data.answer }]);
+    } catch (err) {
+      setMessages((prev) => [...prev, { sender: "ai", text: "Cevap alınamadı." }]);
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="screen">
-      <h2>Oyun Başladı</h2>
-      <div className="messages">
-        {messages.map((msg, idx) => (
-          <div key={idx} className={msg.sender === "Sen" ? "message user" : "message ai"}>
-            <strong>{msg.sender}: </strong>{msg.text}
-          </div>
+    <div style={{ padding: 20 }}>
+      <h2>{currentScenario.name}</h2>
+      <div
+        style={{
+          border: "1px solid #ccc",
+          padding: 10,
+          height: 300,
+          overflowY: "auto",
+          marginBottom: 10,
+        }}
+      >
+        <p><strong>Hikaye:</strong> {currentScenario.story}</p>
+        {messages.map((m, idx) => (
+          <p key={idx} style={{ textAlign: m.sender === "user" ? "right" : "left" }}>
+            <strong>{m.sender === "user" ? "Sen" : currentScenario.name}:</strong> {m.text}
+          </p>
         ))}
       </div>
-      <form onSubmit={handleSubmit}>
-        <input
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-          placeholder="Mesajınızı yazın"
-        />
-        <button type="submit">Gönder</button>
-      </form>
-      <button onClick={resetGame}>Çıkış</button>
+
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+        style={{ width: "80%", padding: 8 }}
+        placeholder="Mesajınızı yazın..."
+      />
+      <button onClick={sendMessage} disabled={loading} style={{ padding: "8px 12px", marginLeft: 5 }}>
+        Gönder
+      </button>
+      <button onClick={exitGame} style={{ padding: "8px 12px", marginLeft: 10, backgroundColor: "#f00", color: "#fff" }}>
+        Çıkış
+      </button>
     </div>
   );
 }
