@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import api from "../api";
 
 const GameContext = createContext();
@@ -10,18 +10,22 @@ export const GameProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Başlat butonuna basınca
   const startGame = () => setScreen("scenarios");
 
+  // Senaryo seçildiğinde
   const selectScenario = (scenario) => {
     setCurrentScenario(scenario);
     setScreen("game");
   };
 
+  // Oyunu çıkışla resetle
   const exitGame = () => {
     setCurrentScenario(null);
     setScreen("welcome");
   };
 
+  // Backend’den senaryoları çek
   const fetchScenarios = async () => {
     setLoading(true);
     setError(null);
