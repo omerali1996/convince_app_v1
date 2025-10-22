@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import WelcomeScreen from "./components/WelcomeScreen";
-import ScenariosScreen from "./components/ScenariosScreen";
+import ScenariosScreen from "./components/ScenarioScreen";
 import GameScreen from "./components/GameScreen";
 
 export default function App() {
@@ -27,3 +27,4 @@ export default function App() {
     </div>
   );
 }
+
