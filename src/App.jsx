@@ -1,7 +1,7 @@
 import React from "react";
 import { GameProvider, useGame } from "./context/GameContext";
 import WelcomeScreen from "./components/WelcomeScreen";
-import ScenariosScreen from "./components/ScenariosScreen";
+import ScenariosScreen from "./components/ScenarioScreen";
 import GameScreen from "./components/GameScreen";
 import "./index.css";
 
@@ -23,3 +23,4 @@ export default function App() {
     </GameProvider>
   );
 }
+
