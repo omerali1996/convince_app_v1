@@ -4,7 +4,7 @@ import api from "../api";
 const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
-  const [step, setStep] = useState(0); // 0 = welcome
+  const [step, setStep] = useState(0); // 0 = Welcome, 1 = Scenario, 2 = Game
   const [scenarios, setScenarios] = useState([]);
   const [selectedScenario, setSelectedScenario] = useState(null);
   const [loading, setLoading] = useState(true);
