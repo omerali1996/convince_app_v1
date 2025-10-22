@@ -1,26 +1,29 @@
-import React from "react";
-import { GameProvider, useGame } from "./context/GameContext";
+import React, { useState } from "react";
 import WelcomeScreen from "./components/WelcomeScreen";
-import ScenariosScreen from "./components/ScenarioScreen";
+import ScenariosScreen from "./components/ScenariosScreen";
 import GameScreen from "./components/GameScreen";
-import "./index.css";
-
-function AppContent() {
-  const { currentScreen } = useGame();
-
-  switch (currentScreen) {
-    case "welcome": return <WelcomeScreen />;
-    case "scenarios": return <ScenariosScreen />;
-    case "game": return <GameScreen />;
-    default: return <WelcomeScreen />;
-  }
-}
 
 export default function App() {
+  const [screen, setScreen] = useState("welcome"); // welcome, scenarios, game
+  const [currentScenario, setCurrentScenario] = useState(null);
+
+  const startGame = () => setScreen("scenarios");
+  const selectScenario = (scenario) => {
+    setCurrentScenario(scenario);
+    setScreen("game");
+  };
+  const resetGame = () => {
+    setCurrentScenario(null);
+    setScreen("welcome");
+  };
+
   return (
-    <GameProvider>
-      <AppContent />
-    </GameProvider>
+    <div style={{ fontFamily: "Arial, sans-serif" }}>
+      {screen === "welcome" && <WelcomeScreen onStart={startGame} />}
+      {screen === "scenarios" && <ScenariosScreen onSelect={selectScenario} />}
+      {screen === "game" && (
+        <GameScreen scenario={currentScenario} onExit={resetGame} />
+      )}
+    </div>
   );
 }
-
