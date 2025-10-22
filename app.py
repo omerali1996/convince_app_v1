@@ -1,46 +1,60 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
-from openai import OpenAI
-from scenarios import scenarios
 import os
+from flask import Flask, request, jsonify
+from openai import OpenAI
+from flask_cors import CORS
+from convince import scenarios  # senin Kivy'deki Convince.py içindeki senaryolar
 
 app = Flask(__name__)
 CORS(app)
 
+# Environment variable'dan API key al
 API_KEY = os.environ.get("OPENAI_API_KEY")
+if not API_KEY:
+    raise ValueError("OPENAI_API_KEY environment variable is not set!")
+
 client = OpenAI(api_key=API_KEY)
 
 @app.route("/api/scenarios", methods=["GET"])
 def get_scenarios():
-    scenario_list = [v for k, v in scenarios.items()]
-    return jsonify(scenario_list)
+    simplified_scenarios = []
+    for sid, scenario in scenarios.items():
+        simplified_scenarios.append({
+            "id": sid,
+            "name": scenario["Senaryo Adı"],
+            "story": scenario["Hikaye"],
+            "system_prompt": scenario["System Prompt"]
+        })
+    return jsonify(simplified_scenarios)
+
 
 @app.route("/api/ask", methods=["POST"])
 def ask():
     data = request.json
-    question = data.get("question")
-    scenarioId = data.get("scenarioId")
-
-    if question is None or scenarioId is None:
-        return jsonify({"error": "Missing question or scenarioId"}), 400
-
-    scenario = scenarios.get(scenarioId)
+    user_input = data.get("user_input")
+    scenario_id = data.get("scenario_id")
+    
+    if user_input is None or scenario_id is None:
+        return jsonify({"error": "Missing user_input or scenario_id"}), 400
+    
+    scenario = scenarios.get(scenario_id)
     if not scenario:
-        return jsonify({"error": "Scenario not found"}), 404
+        return jsonify({"error": "Invalid scenario_id"}), 400
 
     try:
-        response = client.chat.completions.create(
+        chat_completion = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": scenario["System Prompt"]},
-                {"role": "user", "content": question}
+                {"role": "user", "content": user_input}
             ]
         )
-        answer = response.choices[0].message.content
+        answer = chat_completion.choices[0].message.content
         return jsonify({"answer": answer})
+    
     except Exception as e:
-        print("OpenAI API Error:", e)
+        print(f"OpenAI API Error: {e}")
         return jsonify({"error": "Soru cevaplanırken hata oluştu"}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)
