@@ -1,13 +1,26 @@
-import React, { useContext } from "react";
-import { GameContext } from "../context/GameContext";
+import React from "react";
+import { useGame } from "../context/GameContext";
 
 export default function WelcomeScreen() {
-  const { goToScenario } = useContext(GameContext);
+  const { setStep } = useGame();
+
+  const startGame = () => {
+    setStep(1); // ScenarioListScreen'e geçiş
+    window.location.href = "/scenarios"; // veya react-router ile yönlendirme
+  };
 
   return (
-    <div style={{ textAlign: "center", marginTop: 50 }}>
-      <h2>👋 Merhaba! İkna Oyunu Başlayalım</h2>
-      <button onClick={goToScenario} style={{ marginTop: 20, width: "80%" }}>Başlat</button>
+    <div className="screen" style={{ textAlign: "center" }}>
+      <h2 style={{ fontSize: "1.5rem" }}>👋 Merhaba! İkna Oyununa Başlayalım</h2>
+
+      <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: "12px" }}>
+        <button className="btn btn-primary" onClick={startGame}>
+          Başlat
+        </button>
+        <button className="btn btn-secondary" onClick={() => window.close()}>
+          Çıkış
+        </button>
+      </div>
     </div>
   );
 }
