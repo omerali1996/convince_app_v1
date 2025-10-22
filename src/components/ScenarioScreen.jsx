@@ -1,23 +1,10 @@
-import React, { useEffect, useState } from "react";
-import api from "../api";
+import React, { useEffect } from "react";
+import { useGame } from "../context/GameContext";
 
-export default function ScenariosScreen({ onSelect }) {
-  const [scenarios, setScenarios] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export default function ScenariosScreen() {
+  const { scenarios, fetchScenarios, selectScenario, loading, error } = useGame();
 
   useEffect(() => {
-    const fetchScenarios = async () => {
-      try {
-        const res = await api.get("/api/scenarios");
-        setScenarios(res.data || []);
-      } catch (err) {
-        console.error(err);
-        setError("Senaryolar yüklenemedi.");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchScenarios();
   }, []);
 
@@ -32,6 +19,7 @@ export default function ScenariosScreen({ onSelect }) {
         {scenarios.map((s) => (
           <button
             key={s.id}
+            onClick={() => selectScenario(s)}
             style={{
               padding: "10px 15px",
               fontSize: 16,
@@ -41,7 +29,6 @@ export default function ScenariosScreen({ onSelect }) {
               border: "none",
               borderRadius: 6,
             }}
-            onClick={() => onSelect(s)}
           >
             {s.name}
           </button>
