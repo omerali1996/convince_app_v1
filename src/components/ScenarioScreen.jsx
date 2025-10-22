@@ -1,23 +1,29 @@
-import React, { useEffect, useState, useContext } from "react";
-import { getScenarios } from "../api";
-import { GameContext } from "../context/GameContext";
+import React from "react";
+import { useGame } from "../context/GameContext";
 
-export default function ScenarioScreen() {
-  const [scenarios, setScenarios] = useState({});
-  const { startGame, goBack } = useContext(GameContext);
+export default function ScenarioListScreen() {
+  const { cases, setStep } = useGame();
 
-  useEffect(() => {
-    getScenarios().then(setScenarios);
-  }, []);
+  if (!cases.length) return <p>Senaryolar yükleniyor...</p>;
+
+  const selectScenario = (index) => {
+    setStep(1); // Game ekranını başlat
+    localStorage.setItem("currentScenarioIndex", index); // Seçilen senaryoyu kaydet
+    window.location.href = "/game"; // Veya router ile yönlendirme
+  };
 
   return (
-    <div style={{ padding: 20 }}>
-      <button onClick={goBack}>Geri</button>
-      <h3>Senaryolar</h3>
-      <div>
-        {Object.entries(scenarios).map(([id, s]) => (
-          <button key={id} onClick={() => startGame(s)} style={{ display: "block", margin: "10px 0", width: "100%" }}>
-            {s["Senaryo Adı"]}
+    <div className="screen">
+      <h2>📜 Senaryolar</h2>
+      <div className="screen-content" style={{ flexDirection: "column", gap: "10px" }}>
+        {cases.map((scenario, index) => (
+          <button
+            key={index}
+            className="btn btn-primary"
+            onClick={() => selectScenario(index)}
+            style={{ width: "100%", padding: "10px 0" }}
+          >
+            {scenario["Senaryo Adı"]}
           </button>
         ))}
       </div>
