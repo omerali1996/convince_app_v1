@@ -1,7 +1,7 @@
 scenarios = {
     1: {
         "ID": 1,
-        "Hikaye":"""Dünya, 2025 yılının sonlarına yaklaşırken, küresel istikrarın en kırılgan noktalarından biri olan İncirlik Hava Üssü’nde beklenmedik bir kriz patlak verir.
+        "Hikaye":"""DDDünya, 2025 yılının sonlarına yaklaşırken, küresel istikrarın en kırılgan noktalarından biri olan İncirlik Hava Üssü’nde beklenmedik bir kriz patlak verir.
         Kendisini "X Teröristi" olarak adlandıran ve kimliği belirsiz bir kişi, İncirlik'teki nükleer başlıkların bir kısmını ele geçirdiğini ve dünya liderlerine dehşet verici bir ültimatom sunduğunu duyurur.
         X Teröristi’nin talepleri nettir: 50 milyar dolar fidye, belirli ülkelerdeki kritik petrol rezervlerinin imhası ve çeşitli jeopolitik çıkarlar.
         Bunun yanı sıra, eğer bu talepler yerine getirilmezse 20 farklı yüksek gelirli ve yoğun nüfuslu lokasyona 50 adet nükleer başlık fırlatacağını açıklar. 
@@ -313,5 +313,6 @@ scenarios = {
     },
 
 }
+
 
 
